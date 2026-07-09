@@ -1,4 +1,4 @@
-herimport telebot
+import telebot
 
 # Your Bot Token
 BOT_TOKEN = "8700959737:AAH6udD6amqjRnXVoSOYZsgDTVSGdiK8wMM"
