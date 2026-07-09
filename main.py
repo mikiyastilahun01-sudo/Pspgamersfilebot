@@ -1,14 +1,10 @@
-import logging
-import asyncio
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import CommandStart, CommandObject
+herimport telebot
 
+# Your Bot Token
 BOT_TOKEN = "8700959737:AAH6udD6amqjRnXVoSOYZsgDTVSGdiK8wMM"
+bot = telebot.TeleBot(BOT_TOKEN)
 
-logging.basicConfig(level=logging.INFO)
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher()
-
+# Channel ID (Starts with -100)
 CHANNEL_ID = -1004415006792
 
 GAMES_DATABASE = {
@@ -30,36 +26,39 @@ GAMES_DATABASE = {
     }
 }
 
-@dp.message(CommandStart())
-async def start_command(message: types.Message, command: CommandObject):
-    file_key = command.args
+@bot.message_handler(commands=['start'])
+def handle_start(message):
+    text = message.text.split()
     
-    if not file_key:
-        await message.answer("👋 Welcome! Please visit our website and click the download link to get your game files.")
+    if len(text) < 2:
+        bot.reply_to(message, "👋 Welcome! Please visit our website and click the download link to get your game files.")
         return
+        
+    file_key = text[1]
 
     if file_key in GAMES_DATABASE:
         file_info = GAMES_DATABASE[file_key]
-        await message.answer("⏳ Fetching your file from our secure server... Please wait a moment.")
+        bot.reply_to(message, "⏳ Fetching your file from our secure server... Please wait a moment.")
         
         try:
-            await bot.copy_message(
+            bot.copy_message(
                 chat_id=message.chat.id,
                 from_chat_id=CHANNEL_ID,
                 message_id=file_info["message_id"],
                 caption=file_info["caption"],
                 parse_mode="Markdown"
             )
-            await message.answer("✅ File downloaded successfully!\n\n🔗 **To get the next file (Texture/Save Data), go back to our website and click the next download button.**")
+            bot.send_message(
+                chat_id=message.chat.id,
+                text="✅ File downloaded successfully!\n\n🔗 **To get the next file (Texture/Save Data), go back to our website and click the next download button.**",
+                parse_mode="Markdown"
+            )
         except Exception as e:
-            await message.answer("⚠️ Error: Could not transfer the file. Make sure the bot is an Admin in the channel.")
+            bot.reply_to(message, "⚠️ Error: Could not transfer the file. Make sure the bot is an Admin in the channel.")
             print(f"Error: {e}")
     else:
-        await message.answer("❌ Sorry, this link is expired or invalid. Please check the website again.")
+        bot.reply_to(message, "❌ Sorry, this link is expired or invalid. Please check the website again.")
 
-async def main():
-    print("🤖 Bot is successfully running and waiting for users...")
-    await dp.start_polling(bot)
-
-if __name__ == '__main__':
-    asyncio.run(main())
+print("🤖 Bot is successfully running...")
+bot.infinity_polling()
+        
