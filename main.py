@@ -27,6 +27,10 @@ GAMES_DATABASE = {
     "game01_camera": {
         "message_id": 9,
         "caption": "📷 **Camera Pack File**\n\nEnhance your game graphics with this custom camera angle pack."
+    },
+    "cod_victory": {
+        "message_id": 12,
+        "caption": "🎮 **Call of Duty: Road to Victory**\n\nSize: 464.4 MB\n\nEnjoy the classic action on your PSP!"
     }
 }
 
