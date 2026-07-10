@@ -1,4 +1,8 @@
 import telebot
+import os
+import http.server
+import socketserver
+import threading
 
 # Your Bot Token
 BOT_TOKEN = "8700959737:AAH6udD6amqjRnXVoSOYZsgDTVSGdiK8wMM"
@@ -59,6 +63,17 @@ def handle_start(message):
     else:
         bot.reply_to(message, "❌ Sorry, this link is expired or invalid. Please check the website again.")
 
+# Dummy server to satisfy Render's port requirement
+def run_dummy_server():
+    port = int(os.environ.get("PORT", 8080))
+    handler = http.server.SimpleHTTPRequestHandler
+    with socketserver.TCPServer(("", port), handler) as httpd:
+        print(f"🌍 Serving dummy port on {port}")
+        httpd.serve_forever()
+
+# Start dummy server in a separate thread
+threading.Thread(target=run_dummy_server, daemon=True).start()
+
 print("🤖 Bot is successfully running...")
 bot.infinity_polling()
-            
+    
